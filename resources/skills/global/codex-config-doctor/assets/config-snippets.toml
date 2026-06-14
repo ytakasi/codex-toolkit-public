@@ -1,0 +1,27 @@
+# リポジトリ方針に合うブロックだけをコピーする。
+# 使う前に placeholder の id と path を置き換える。
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+# App / connector tool approval の例。
+# すべての tool をまとめて許可せず、必要な tool だけを狭く上書きする。
+[apps.REPLACE_ME_APP_ID]
+enabled = true
+
+[apps.REPLACE_ME_APP_ID.tools."REPLACE_ME_TOOL_ID"]
+approval_mode = "approve"
+
+# MCP 許可リストの例。
+[mcp_servers.REPLACE_ME_SERVER_ID]
+enabled_tools = ["REPLACE_ME_TOOL_NAME"]
+
+# Skill 有効化の例。
+[[skills.config]]
+path = "REPLACE_ME_ABSOLUTE_OR_PROJECT_RELATIVE_SKILL_PATH"
+enabled = true
+
+# 機密ファイルの読み取り拒否は config.toml ではなく、
+# resources/templates/codex-requirements/requirements.secret-read-deny.toml を元に
+# 管理側強制設定へ置く。

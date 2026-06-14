@@ -1,0 +1,4 @@
+interface:
+  display_name: "ツールキット昇格"
+  short_description: "再利用できる運用資産をcodex-toolkitへ昇格する"
+  default_prompt: "$toolkit-promotion を使って、この運用資産をcodex-toolkitへ昇格すべきか判定して、必要なら最小の形で整理して。"

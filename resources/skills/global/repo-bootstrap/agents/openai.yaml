@@ -1,0 +1,4 @@
+interface:
+  display_name: "リポジトリ初期化"
+  short_description: "新規リポジトリの初期骨格と運用の土台を整える"
+  default_prompt: "$repo-bootstrap を使って、このリポジトリの初期骨格と運用の土台を整えて。"

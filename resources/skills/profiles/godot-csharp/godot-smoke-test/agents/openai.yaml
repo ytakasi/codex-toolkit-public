@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godot 起動確認"
+  short_description: "Godot project のbuildとheadless起動を確認する"
+  default_prompt: "$godot-smoke-test を使って、このGodot projectのbuildとheadless起動を確認して。"

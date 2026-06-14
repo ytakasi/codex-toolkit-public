@@ -1,0 +1,4 @@
+interface:
+  display_name: "物語仕様 実装準備レビュー"
+  short_description: "分岐、状態、ID、UI表示境界を実装前に点検する"
+  default_prompt: "$narrative-spec-readiness-audit を使って、このシナリオ仕様が実装に入れる状態か監査して。"

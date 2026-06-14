@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI / Infra 安全レビュー"
+  short_description: "CI/CDとIaCのstate・secret・権限境界をレビューする"
+  default_prompt: "$ci-infra-safety-review を使って、このCI/CD・IaC変更を state管理、secret、権限、再実行性の観点でレビューして。"

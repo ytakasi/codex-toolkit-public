@@ -1,0 +1,4 @@
+interface:
+  display_name: "構造レビュー"
+  short_description: "コードの責務分担と読みやすさを点検する"
+  default_prompt: "$clarity-review を使って、このコードの責務分担と読みやすさを点検し、改善方向を tradeoff つきで出して。"

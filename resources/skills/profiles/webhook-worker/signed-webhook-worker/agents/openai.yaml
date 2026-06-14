@@ -1,0 +1,4 @@
+interface:
+  display_name: "Signed Webhook Worker"
+  short_description: "署名付きWebhook/Interaction endpointを安全に実装する"
+  default_prompt: "$signed-webhook-worker を使って、署名付きWebhook / Interaction endpointをraw body検証とACK制約込みで安全に実装して。"

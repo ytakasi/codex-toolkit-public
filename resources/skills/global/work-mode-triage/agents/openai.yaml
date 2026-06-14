@@ -1,0 +1,4 @@
+interface:
+  display_name: "作業モード判定"
+  short_description: "依頼やissueを相談、草案、正本反映、tracking-onlyに切り分ける"
+  default_prompt: "$work-mode-triage を使って、この依頼や issue の作業モード、必要な intake、完了境界を判定して。"

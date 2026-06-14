@@ -1,0 +1,2 @@
+*.sh text eol=lf
+resources/global/AGENTS.common-rules-template.md text eol=lf

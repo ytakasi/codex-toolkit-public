@@ -1,0 +1,4 @@
+interface:
+  display_name: "セッション引き継ぎ"
+  short_description: "Codexセッション間で再開しやすい引き継ぎを作る"
+  default_prompt: "$session-handoff を使って、この作業を次セッションで再開しやすい形に引き継いで。"

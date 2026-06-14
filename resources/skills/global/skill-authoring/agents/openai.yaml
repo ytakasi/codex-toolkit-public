@@ -1,0 +1,4 @@
+interface:
+  display_name: "スキル作成"
+  short_description: "正本ルートと配布レイヤーを判定してスキルやフックを作る"
+  default_prompt: "$skill-authoring を使って、新しいスキルやフックの正本ルートを判定して最小構成で作成して。"

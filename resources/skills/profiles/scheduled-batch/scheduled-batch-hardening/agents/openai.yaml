@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scheduled Batch Hardening"
+  short_description: "定期バッチのActions・通知・DB運用を堅くする"
+  default_prompt: "$scheduled-batch-hardening を使って、このscheduled batch / watcherのconcurrency、timeout、通知、DB運用を堅くして。"

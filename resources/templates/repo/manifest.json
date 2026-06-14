@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "manifestPreset": "basic",
+  "profiles": ["global"],
+  "toolkitSourceRoot": "agent-skills/toolkit",
+  "repoSourceRoot": "agent-skills/repo",
+  "generatedRuntimeRoot": ".agents",
+  "hookEntrypoint": ".codex/hooks.json",
+  "hookDispatcher": ".codex/hooks/codex-kit-dispatch.ps1",
+  "toolkitCommit": null
+}

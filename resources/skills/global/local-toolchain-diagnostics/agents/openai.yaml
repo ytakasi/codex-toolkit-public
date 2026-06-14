@@ -1,0 +1,4 @@
+interface:
+  display_name: "Toolchain 診断"
+  short_description: "PATHやsandbox由来のコマンド実行失敗を切り分ける"
+  default_prompt: "$local-toolchain-diagnostics を使って、この環境のtoolchain問題を切り分けて。"

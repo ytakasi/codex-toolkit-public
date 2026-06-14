@@ -1,0 +1,12 @@
+# codex-kit sync で生成される toolkit layer。ここを直接編集しない。
+agent-skills/toolkit/
+
+# codex-kit sync で生成される runtime tree。ここを直接編集しない。
+.agents/
+.codex/
+
+# codex-kit 内部用の任意cache。
+.codex-kit/cache/
+
+# 将来 machine-local layer を有効にする場合の個人用置き場。
+agent-skills/local/

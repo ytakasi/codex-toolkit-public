@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discord通知整理"
+  short_description: "Discord通知をembedやfieldで読みやすく整える"
+  default_prompt: "$discord-alert-message-polish を使って、このDiscord通知を判断しやすいembed / field構成へ整えて。"

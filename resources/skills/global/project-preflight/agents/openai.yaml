@@ -1,0 +1,4 @@
+display_information:
+  display_name: "Project Preflight"
+  short_description: "初回実装前の準備とリスク潰しを再現する"
+  default_prompt: "$project-preflight を使って、このリポジトリで初回実装に入る前の準備、正本docs、リスク、toolchain、secret境界、次アクションを揃えて。"

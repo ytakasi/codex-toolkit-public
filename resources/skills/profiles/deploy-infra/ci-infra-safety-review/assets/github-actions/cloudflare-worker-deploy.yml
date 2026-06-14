@@ -1,0 +1,56 @@
+name: REPLACE_ME Worker Deploy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: replace-me-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Deploy Worker
+        run: pnpm exec wrangler deploy --config wrangler.worker.jsonc
+
+      # 任意のdeploy後hook:
+      # - name: provider command を登録
+      #   env:
+      #     PROVIDER_BOT_TOKEN: ${{ secrets.PROVIDER_BOT_TOKEN }}
+      #     PROVIDER_CLIENT_ID: ${{ secrets.PROVIDER_CLIENT_ID }}
+      #   run: pnpm worker:register-commands
+      #
+      # - name: provider endpoint を設定
+      #   env:
+      #     PROVIDER_ENDPOINT_URL: ${{ vars.PROVIDER_ENDPOINT_URL }}
+      #   run: pnpm worker:configure-endpoint "$PROVIDER_ENDPOINT_URL"

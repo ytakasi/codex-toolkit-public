@@ -1,0 +1,4 @@
+interface:
+  display_name: "Toolkit Integrity Audit"
+  short_description: "codex-toolkit変更後の整合性を点検する"
+  default_prompt: "$toolkit-integrity-audit を使って、codex-toolkit変更後のskill、template、reference、setup、配布モデルの整合性を確認して。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Persisted Settings Change"
+  short_description: "永続設定変更のsurface漏れを点検する"
+  default_prompt: "$persisted-settings-change を使って、この永続設定の追加・変更でmodel、DB、UI、docs、testsの抜けがないか確認して。"

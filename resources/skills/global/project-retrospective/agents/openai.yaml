@@ -1,0 +1,4 @@
+interface:
+  display_name: "プロジェクト振り返り"
+  short_description: "作業の学びをリポジトリ資産やtoolkit候補へ仕分ける"
+  default_prompt: "$project-retrospective を使って、この作業の振り返りから再利用できる学びをリポジトリ固有資産、docs、handoff要否、toolkit候補に仕分けて。"

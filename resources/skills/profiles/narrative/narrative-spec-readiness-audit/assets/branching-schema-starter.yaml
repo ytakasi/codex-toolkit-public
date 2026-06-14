@@ -1,0 +1,46 @@
+# Starter only. Treat this as a sketch for implementation planning, not as a canonical DSL.
+routes:
+  - id: route.example
+    label: Example route
+    priority: 100
+    conditions:
+      allOf:
+        - fact: fact.example_seen
+          equals: true
+      anyOf: []
+      not: []
+    effects:
+      setFlags: []
+      unlocks: []
+
+endings:
+  - id: ending.example
+    label: Example ending
+    priority: 100
+    conditions:
+      allOf: []
+      anyOf: []
+      not: []
+    fallback: false
+
+states:
+  - id: state.example
+    label: Example state
+    allowedTransitions:
+      - state.next
+
+facts:
+  - id: fact.example_seen
+    label: Example fact
+    tags: []
+    visibleToUser: false
+    source:
+      type: event
+      id: event.example
+
+mergeRules:
+  - id: merge.example
+    requiredFacts: []
+    resultFact: fact.example_merged
+    lostFlags: []
+    safetyNotes: []

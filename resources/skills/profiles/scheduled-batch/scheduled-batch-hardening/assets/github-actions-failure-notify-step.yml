@@ -1,0 +1,63 @@
+# GitHub Actions job の末尾付近に追加する。
+# 必須 secret: DISCORD_ERROR_WEBHOOK_URL
+# 期待する 環境変数名は、対象 app に合わせて変えてよい。
+# matrix job では CATEGORY_GROUP、TARGET、SHARD などの field を payload に追加する。
+# 通知失敗で元の workflow failure を隠さないよう、continue-on-error は true のままにする。
+- name: 失敗を Discord に通知
+  if: ${{ failure() }}
+  continue-on-error: true
+  env:
+    DISCORD_ERROR_WEBHOOK_URL: ${{ secrets.DISCORD_ERROR_WEBHOOK_URL }}
+    RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    APP_NAME: CHANGE_ME
+    JOB_NAME: CHANGE_ME
+    REPOSITORY: ${{ github.repository }}
+    RUN_NUMBER: ${{ github.run_number }}
+    RUN_ATTEMPT: ${{ github.run_attempt }}
+    REF_NAME: ${{ github.ref_name }}
+    SHA: ${{ github.sha }}
+    ACTOR: ${{ github.actor }}
+  run: |
+    if [ -z "$DISCORD_ERROR_WEBHOOK_URL" ]; then
+      echo "::warning::DISCORD_ERROR_WEBHOOK_URL secret が未設定なので、Discord エラー通知を skip します。"
+      exit 0
+    fi
+
+    SHORT_SHA="${SHA:0:7}"
+    export SHORT_SHA
+
+    python3 - <<'PY' > discord-error-payload.json
+    import json
+    import os
+
+    fields = [
+        {"name": "App", "value": os.environ["APP_NAME"], "inline": True},
+        {"name": "Job", "value": os.environ["JOB_NAME"], "inline": True},
+        {"name": "Repository", "value": os.environ["REPOSITORY"], "inline": True},
+        {"name": "Run", "value": f"#{os.environ['RUN_NUMBER']} attempt {os.environ['RUN_ATTEMPT']}", "inline": True},
+        {"name": "Ref", "value": os.environ["REF_NAME"], "inline": True},
+        {"name": "Commit", "value": os.environ["SHORT_SHA"], "inline": True},
+        {"name": "Actor", "value": os.environ["ACTOR"], "inline": True},
+        {"name": "Run URL", "value": os.environ["RUN_URL"], "inline": False},
+    ]
+
+    payload = {
+        "content": f"[{os.environ['APP_NAME']}] GitHub Actions workflow failed",
+        "allowed_mentions": {"parse": []},
+        "embeds": [
+            {
+                "title": f"{os.environ['APP_NAME']} workflow failure",
+                "url": os.environ["RUN_URL"],
+                "color": 15158332,
+                "fields": fields,
+            }
+        ],
+    }
+
+    print(json.dumps(payload, ensure_ascii=False))
+    PY
+
+    curl --fail-with-body --silent --show-error \
+      -H "Content-Type: application/json" \
+      -d @discord-error-payload.json \
+      "$DISCORD_ERROR_WEBHOOK_URL"

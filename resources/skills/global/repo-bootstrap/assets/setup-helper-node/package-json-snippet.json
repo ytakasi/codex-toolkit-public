@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "setup:init": "node scripts/setupInit.mjs",
+    "setup:doctor": "node scripts/setupDoctor.mjs"
+  }
+}

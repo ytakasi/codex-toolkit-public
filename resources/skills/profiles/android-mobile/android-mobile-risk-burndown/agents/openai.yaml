@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Mobile Risk Burn-down"
+  short_description: "Androidの個人データ/権限/外部APIリスクを実装前に潰す"
+  default_prompt: "$android-mobile-risk-burndown を使って、このAndroid/mobile appのHealth Connect、位置情報、個人データ、外部API proxyのリスクを実装前に潰して。"

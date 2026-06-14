@@ -1,0 +1,4 @@
+interface:
+  display_name: "Provider Dry Run"
+  short_description: "外部providerを最小real-data dry-runで観測する"
+  default_prompt: "$provider-dry-run を使って、新しい外部providerを最小の real-data dry-run から安全に観測して。"

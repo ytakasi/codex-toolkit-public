@@ -1,0 +1,84 @@
+name: REPLACE_ME Scheduled Job
+
+on:
+  schedule:
+    - cron: "37 6 * * *" # 15:37 JST。このリポジトリに合わせて調整する。
+  workflow_dispatch:
+
+concurrency:
+  group: replace-me-scheduled-job
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: "REPLACE_ME_DOTNET_VERSION"
+  CLI_PROJECT: "REPLACE_ME_PROJECT/REPLACE_ME_PROJECT.csproj"
+  # 専用の test project がない定期jobでは空のままにする。
+  TEST_PROJECT: ""
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MIGRATION_DATABASE_CONNECTION_STRING: ${{ secrets.MIGRATION_DATABASE_CONNECTION_STRING }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore $CLI_PROJECT
+
+      - name: Migrate database
+        env:
+          Database__ConnectionString: ${{ env.MIGRATION_DATABASE_CONNECTION_STRING }}
+        run: |
+          if [ -z "$MIGRATION_DATABASE_CONNECTION_STRING" ]; then
+            echo "::notice::MIGRATION_DATABASE_CONNECTION_STRING is not configured; skipping migration."
+            exit 0
+          fi
+
+          dotnet run --no-restore --project $CLI_PROJECT -- --migrate-db
+
+  run:
+    needs: migrate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        category_group: [default]
+    env:
+      Database__ConnectionString: ${{ secrets.DATABASE_CONNECTION_STRING }}
+      # Notifications__Discord__Webhooks__example: ${{ secrets.DISCORD_EXAMPLE_WEBHOOK_URL }}
+      # ExternalApis__Example__ApiKey: ${{ secrets.EXAMPLE_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore $CLI_PROJECT
+
+      - name: Build
+        run: dotnet build $CLI_PROJECT --no-restore --configuration Release
+
+      - name: Test
+        if: ${{ env.TEST_PROJECT != '' }}
+        run: dotnet test $TEST_PROJECT --configuration Release
+
+      - name: Run scheduled job
+        run: dotnet run --no-build --project $CLI_PROJECT --configuration Release -- --category-group ${{ matrix.category_group }}
+
+      # 任意の失敗通知:
+      # scheduled-batch-hardening skill の
+      # assets/github-actions-failure-notify-step.yml から標準stepを貼り付け、
+      # APP_NAME / JOB_NAME をこのリポジトリ用に設定する。

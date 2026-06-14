@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Config Doctor"
+  short_description: "Codexの承認・sandbox・tool・model設定を診断する"
+  default_prompt: "$codex-config-doctor を使って、Codexの承認、app tool、モデル利用可否 の詰まりを切り分けて。"
