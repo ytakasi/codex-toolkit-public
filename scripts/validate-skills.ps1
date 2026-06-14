@@ -4,6 +4,9 @@ param(
     [switch]$SkipGitDiffCheck
 )
 
+# codex-toolkit の配布資産を静的検証する script。
+# skill frontmatter、assets 配置、古い参照、line ending、git diff whitespace をまとめて見る。
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -15,6 +18,8 @@ function Get-ResourcesRoot {
 }
 
 function Test-ResourceRootLayout {
+    # resources 配下への集約が崩れていないか見る。
+    # 旧 top-level global/hooks/skills/templates が復活したら公開面が二重化するため失敗にする。
     $resourcesRoot = Get-ResourcesRoot
     foreach ($relativePath in @(
         'global',
@@ -175,6 +180,8 @@ function Test-SkillMetadata {
 }
 
 function Test-StaleReferences {
+    # 物理移動で残りやすい古い path や旧 skill 名を検出する。
+    # ここに引っかかる場合は、docs か skill 本文が今の配置を指していない。
     $patterns = @(
         'scheduled-job-hardening',
         'workflows/',
@@ -245,6 +252,8 @@ function Test-NotificationTemplateDeduplication {
 }
 
 function Test-TemplateOwnership {
+    # resources/templates は CLI が直接読むテンプレートだけに限定する。
+    # skill 固有の雛形は owning skill の assets/ に置く。
     $templatesRoot = Join-Path (Get-ResourcesRoot) 'templates'
     if (-not (Test-Path -LiteralPath $templatesRoot)) {
         return
@@ -272,6 +281,7 @@ function Test-GlobalRulesTemplateLineEndings {
 }
 
 function Test-GitDiffCheck {
+    # validate-skills 単体で、commit 前に whitespace error も拾えるようにする。
     if ($SkipGitDiffCheck) {
         return
     }

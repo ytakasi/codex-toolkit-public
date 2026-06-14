@@ -1,8 +1,10 @@
 # codex-kit CLI の profile / preset 選択。
+# UI の選択肢は人間向け、profile id は manifest と resources path 用として分ける。
 
 function Get-AvailableProfiles {
     param([string]$ToolkitRoot)
 
+    # global は resources/skills/profiles には置かず、必ず先頭に出す特別な基礎 profile。
     $resourcesRoot = Get-ResourcesRoot -ToolkitRoot $ToolkitRoot
     $profilesRoot = Join-Path $resourcesRoot 'skills/profiles'
     $profiles = New-Object 'System.Collections.Generic.List[string]'
@@ -47,6 +49,7 @@ function Add-ProfilesFromPreset {
 }
 
 function Get-InteractiveProfileChoices {
+    # Label は init の表示文言。Adds は説明用で、実際の追加処理は Add-ProfilesFromInteractiveChoice に集約する。
     @(
         [pscustomobject]@{ Id = '1'; Label = '基本だけ / まだ未定'; Adds = 'global' }
         [pscustomobject]@{ Id = '2'; Label = '定期実行 / 巡回バッチ'; Adds = 'scheduled-batch' }
@@ -65,6 +68,7 @@ function Get-InteractiveProfileChoices {
 function Read-ConsoleProfileChoiceSelection {
     param([object[]]$Choices)
 
+    # GUI / TUI ではなく素朴な番号入力にして、PowerShell 7 だけあれば動く形にしている。
     Write-Host '複数ある時は、カンマかスペースで区切って入力できます。'
     Write-Host '迷ったら何も入力せず Enter で基本構成にします。'
     foreach ($choice in $Choices) {
@@ -140,6 +144,8 @@ function Resolve-SelectedProfiles {
     $preset = Get-Option -Parsed $Parsed -Name 'preset' -Default $null
     $isNonInteractive = Test-Option -Parsed $Parsed -Name 'non-interactive'
 
+    # 選択優先度は preset > 明示 --profile > non-interactive basic > interactive。
+    # 最後に存在確認し、manifest に存在しない profile を保存しない。
     if (-not [string]::IsNullOrWhiteSpace($preset)) {
         Add-ProfilesFromPreset -List $profiles -PresetName $preset
     } elseif ($Parsed.Profiles.Count -gt 0) {

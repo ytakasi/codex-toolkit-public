@@ -1,4 +1,5 @@
 # codex-kit CLI の path 解決と安全確認。
+# sync は生成ディレクトリを削除・再生成するため、path 境界の判定はここに集約する。
 
 function Get-FullPath {
     param(
@@ -18,6 +19,7 @@ function Get-FullPath {
 }
 
 function Get-ToolkitRoot {
+    # テストや開発時は env で差し替えられる。通常実行では bin/codex-kit.ps1 が設定した root を使う。
     if (-not [string]::IsNullOrWhiteSpace($env:CODEX_TOOLKIT_ROOT)) {
         return Get-FullPath $env:CODEX_TOOLKIT_ROOT
     }
@@ -38,6 +40,8 @@ function Get-ResourcesRoot {
 function Get-GitRootOrCurrent {
     param([string]$StartPath)
 
+    # --repo-root に subdirectory が渡されても repository root へ寄せる。
+    # git repository でなければ、渡された path をそのまま standalone repo root として扱う。
     $full = Get-FullPath $StartPath
     $gitRoot = & git -C $full rev-parse --show-toplevel 2>$null
     if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace(($gitRoot -join ''))) {
@@ -92,6 +96,7 @@ function Test-PathInside {
         [string]$Path
     )
 
+    # Windows では大文字小文字の違いを同じ path として扱う。
     $base = (Get-FullPath $BasePath).TrimEnd('\', '/')
     $target = (Get-FullPath $Path).TrimEnd('\', '/')
     $comparison = [System.StringComparison]::OrdinalIgnoreCase
@@ -119,6 +124,8 @@ function Assert-ManagedDirectory {
         [string]$ExpectedRelativePath
     )
 
+    # 削除・再生成してよいのは codex-kit が管理する既定ディレクトリだけ。
+    # manifest を手で書き換えて repo root や repo 外を消す事故をここで止める。
     $normalized = Normalize-RelativePathText $RelativePath
     $expected = Normalize-RelativePathText $ExpectedRelativePath
     if ($normalized -ne $expected) {
@@ -128,6 +135,7 @@ function Assert-ManagedDirectory {
     $path = Get-RepoPath -RepoRoot $RepoRoot -RelativePath $RelativePath
     if (Test-Path -LiteralPath $path) {
         $item = Get-Item -LiteralPath $path -Force
+        # junction / symlink の先を Remove-Item しないため、reparse point は管理対象から外す。
         if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
             throw "reparse point / symlink は削除対象にできない: $path"
         }

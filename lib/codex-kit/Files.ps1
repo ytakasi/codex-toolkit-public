@@ -1,4 +1,5 @@
 # codex-kit CLI の file IO helper。
+# path の安全確認は呼び出し側で済ませ、ここでは dry-run と実 IO の差だけを扱う。
 
 function Remove-AndRecreateDirectory {
     param(
@@ -6,6 +7,8 @@ function Remove-AndRecreateDirectory {
         [bool]$DryRun
     )
 
+    # sync の generated layer を作り直すための helper。
+    # 呼び出し前に Assert-ManagedDirectory を通す前提。
     if ($DryRun) {
         Write-Step "削除して再生成: $Path"
         return
@@ -39,6 +42,7 @@ function Write-JsonFile {
         [bool]$DryRun
     )
 
+    # manifest / hooks.json は機械が読むため、ConvertTo-Json で構造を保って書き出す。
     if ($DryRun) {
         Write-Step "JSON 更新: $Path"
         return
@@ -58,6 +62,8 @@ function Copy-DirectoryContents {
         [bool]$NoOverwrite = $false
     )
 
+    # toolkit layer 生成と repo template 初期化の両方で使う。
+    # NoOverwrite は repo 固有の叩き台を既存ファイルで上書きしないためのもの。
     if (-not (Test-Path -LiteralPath $Source)) {
         return
     }

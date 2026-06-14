@@ -5,6 +5,9 @@ param(
     [string]$Scope = 'User'
 )
 
+# codex-kit を PATH から呼べるようにする installer。
+# 実体は bin/codex-kit.cmd / codex-kit.ps1 なので、この script は PATH への追記だけを担当する。
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -23,6 +26,7 @@ function Write-Step {
 function Normalize-PathText {
     param([string]$Path)
 
+    # PATH 比較では末尾 slash や相対 path の差を吸収する。
     if ([string]::IsNullOrWhiteSpace($Path)) {
         return ''
     }
@@ -50,6 +54,7 @@ function Test-PathListContains {
         [string]$TargetPath
     )
 
+    # PATH は文字列列挙なので、正規化してから case-insensitive に比較する。
     $target = Normalize-PathText $TargetPath
     foreach ($entry in Split-PathList $Value) {
         if ((Normalize-PathText $entry).Equals($target, [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -86,6 +91,7 @@ $currentPath = if ($Scope -eq 'User') {
 
 $alreadyInstalled = Test-PathListContains -Value $currentPath -TargetPath $binPath
 
+# User scope は次の terminal から効く。Process scope は今の terminal だけで試すための安全な導線。
 Write-Host 'codex-kit install'
 Write-Step "toolkit root: $toolkitRoot"
 Write-Step "bin path: $binPath"

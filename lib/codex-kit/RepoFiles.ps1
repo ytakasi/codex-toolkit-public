@@ -1,4 +1,5 @@
 # codex-kit CLI が対象リポジトリに置く管理ファイル。
+# AGENTS.md と .gitignore はユーザーが触る可能性が高いため、管理ブロックや追記だけで更新する。
 
 function Get-RepoRulesBlock {
     param(
@@ -6,6 +7,7 @@ function Get-RepoRulesBlock {
         [string[]]$Profiles
     )
 
+    # 共通ルール template から toolkit 管理 marker を剥がし、対象 repo 用の管理ブロックに再利用する。
     $resourcesRoot = Get-ResourcesRoot -ToolkitRoot $ToolkitRoot
     $commonRulesTemplatePath = Join-Path $resourcesRoot 'global/AGENTS.common-rules-template.md'
     $commonRulesTemplate = Get-Content -Raw -LiteralPath $commonRulesTemplatePath
@@ -24,6 +26,7 @@ function Update-ManagedBlock {
         [bool]$DryRun
     )
 
+    # marker の内側だけを置き換える。marker 外の README 的な説明や repo 固有ルールは残す。
     $newBlock = "$StartMarker`n$Body$EndMarker`n"
     $current = ''
     if (Test-Path -LiteralPath $Path) {
@@ -71,6 +74,8 @@ function Update-GitignoreFromTemplate {
         [bool]$DryRun
     )
 
+    # 生成物を Git に入れないための ignore 行を足す。
+    # 既存 .gitignore から行を消さず、template 側の不足分だけを末尾へ追加する。
     $resourcesRoot = Get-ResourcesRoot -ToolkitRoot $ToolkitRoot
     $templatePath = Join-Path $resourcesRoot 'templates/repo/.gitignore'
     $gitignorePath = Join-Path $RepoRoot '.gitignore'

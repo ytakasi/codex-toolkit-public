@@ -1,4 +1,5 @@
 # codex-kit CLI の表示と引数 parse。
+# ここでは文字列を構造化するだけに留め、実際の副作用や repo 検証は command 側で行う。
 
 function Write-Step {
     param([string]$Message)
@@ -30,6 +31,8 @@ codex-kit
 function Read-CliArgs {
     param([string[]]$RawArgs)
 
+    # 最初の非 option token を command として扱う。
+    # それ以降は小さな手書き parser で、PowerShell 風の -DryRun と POSIX 風の --dry-run を両方受ける。
     $command = 'help'
     $index = 0
     if ($RawArgs.Count -gt 0 -and $RawArgs[0] -notmatch '^-') {
@@ -41,6 +44,8 @@ function Read-CliArgs {
     $profiles = New-Object 'System.Collections.Generic.List[string]'
     $positionals = New-Object 'System.Collections.Generic.List[string]'
 
+    # ここでは unknown option を即エラーにせず positionals に落とす。
+    # command 実装側が必要に応じて使うため、parse と validate を分けている。
     while ($index -lt $RawArgs.Count) {
         $arg = $RawArgs[$index]
         switch ($arg) {

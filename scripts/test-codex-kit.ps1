@@ -1,5 +1,5 @@
 # codex-kit CLI の smoke test。
-# 一時 repo を作って init / sync / status / doctor / hook dispatch を確認する。
+# 一時 repo を作って init / sync / status / doctor / hook dispatch を、ユーザーに近い外部 process 経由で確認する。
 
 param(
     [switch]$KeepTemp,
@@ -90,6 +90,7 @@ function Invoke-ProcessChecked {
         [string]$WorkingDirectory = ''
     )
 
+    # CLI を dot-source せず別 process で起動し、標準入出力と exit code まで含めて検証する。
     Write-TestStep "$Label $($Arguments -join ' ')"
 
     $psi = [System.Diagnostics.ProcessStartInfo]::new()
@@ -170,6 +171,7 @@ function New-SmokeRepo {
 function Assert-SafeTempPath {
     param([string]$Path)
 
+    # cleanup は必ず workspace 内の .tmp-codex-kit-* だけに限定する。
     if (-not (Test-Path -LiteralPath $Path)) {
         return
     }
@@ -313,6 +315,7 @@ function Invoke-HookDispatcher {
 function Test-RepoLayerOverride {
     param([string]$Repo)
 
+    # repo layer が toolkit layer に同じ相対 path を持つ時、runtime では repo layer が後勝ちになる。
     $repoSkill = Join-Path $Repo 'agent-skills/repo/skills/work-mode-triage'
     [void](New-Item -ItemType Directory -Path $repoSkill -Force)
     Set-Content -LiteralPath (Join-Path $repoSkill 'SKILL.md') -Value @'
@@ -339,6 +342,7 @@ description: repo override smoke test
 function Test-SyncRejectsManagedPathChanges {
     param([string]$Repo)
 
+    # manifest 手編集で生成先を危険な path に変えられても、sync が削除前に止まることを確認する。
     $manifest = Read-Manifest -Repo $Repo
     $originalToolkitSourceRoot = [string]$manifest.toolkitSourceRoot
     $originalGeneratedRuntimeRoot = [string]$manifest.generatedRuntimeRoot
@@ -377,6 +381,7 @@ function Test-SyncRejectsManagedPathChanges {
 function Test-ReparsePointIsRejected {
     param([string]$Repo)
 
+    # junction / symlink を generated layer に置かれた場合、リンク先を削除しないように拒否する。
     $toolkitLayer = Join-Path $Repo 'agent-skills/toolkit'
     $junctionTarget = Join-Path $Repo 'agent-skills/toolkit-junction-target'
 

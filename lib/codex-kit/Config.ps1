@@ -1,5 +1,7 @@
 # codex-kit CLI の共有設定。
+# 文字列識別子は manifest や docs と揃える必要があるため、表示ラベルとは分けて管理する。
 
+# Codex の標準 hook event。hooks.json 生成時に全 event へ同じ dispatcher を張る。
 $script:HookEvents = @(
     'PreToolUse',
     'PermissionRequest',
@@ -13,6 +15,7 @@ $script:HookEvents = @(
     'Stop'
 )
 
+# preset は init の短縮指定。必ず global を含め、用途別 profile は必要最小限にする。
 $script:PresetProfiles = [ordered]@{
     'basic' = @('global')
     'android-mobile' = @('global', 'android-mobile')

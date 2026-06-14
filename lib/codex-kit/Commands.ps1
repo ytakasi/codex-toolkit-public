@@ -1,8 +1,10 @@
 # codex-kit CLI の command 実装。
+# ここが CLI の command dispatcher と副作用の入口。個別の低レベル処理は各 helper に寄せる。
 
 function Invoke-ListProfiles {
     param([string]$ToolkitRoot)
 
+    # resources に実在する profile と skill をそのまま表示し、docs と実体のズレを見つけやすくする。
     $resourcesRoot = Get-ResourcesRoot -ToolkitRoot $ToolkitRoot
     Write-Host 'profiles'
     foreach ($profile in Get-AvailableProfiles -ToolkitRoot $ToolkitRoot) {
@@ -27,6 +29,7 @@ function Invoke-Status {
         [string]$ToolkitRoot
     )
 
+    # status は repo を変更しない。manifest と現在の toolkit layer から上書き関係だけを読む。
     $manifest = Read-Manifest -RepoRoot $RepoRoot
     $profiles = @(Get-ManifestProfiles -Manifest $manifest)
     $currentCommit = Get-ToolkitCommit -ToolkitRoot $ToolkitRoot
@@ -60,6 +63,7 @@ function Invoke-Doctor {
         [string]$ToolkitRoot
     )
 
+    # doctor は toolchain と manifest path を軽く見る診断。修復はせず、足りないものを表示するだけ。
     Write-Host 'codex-kit doctor'
     Write-Step "toolkit root: $ToolkitRoot"
     Write-Step "repo root: $RepoRoot"
@@ -86,6 +90,7 @@ function Invoke-SelfUpdate {
         [bool]$DryRun
     )
 
+    # update の前段で toolkit 自体を fast-forward する。merge が必要な状態では sync へ進まない。
     if ($DryRun) {
         Write-Step "git pull --ff-only を実行予定: $ToolkitRoot"
         return
@@ -118,6 +123,7 @@ function Invoke-Harden {
         [string]$TargetPath
     )
 
+    # harden は管理側強制設定の候補を見せるだけ。system 領域への書き込みはまだ行わない。
     $resourcesRoot = Get-ResourcesRoot -ToolkitRoot $ToolkitRoot
     $template = Join-Path $resourcesRoot 'templates/codex-requirements/requirements.secret-read-deny.toml'
     if (-not (Test-Path -LiteralPath $template)) {
@@ -163,6 +169,8 @@ function Invoke-Harden {
 function Invoke-Main {
     param([string[]]$RawArgs)
 
+    # すべての command はここで分岐する。
+    # repo-root が必要な command だけ Get-RepoRootFromOptions で解決し、help/list は repo 不要で動かす。
     $parsed = Read-CliArgs -RawArgs $RawArgs
     $toolkitRoot = Get-ToolkitRoot
 
