@@ -6,7 +6,7 @@ description: 外部API、外部provider、Web source、新しい provider adapte
 # Provider Dry Run
 
 外部provider連携を、最初から賢く見せるより先に、現実データで嘘をつかない形へ立ち上げる手順。
-本番運用、scheduled job、retry、summary metric、failure taxonomy を固める段階では、配備済みの本番運用化手順や `scheduled-batch-hardening` へ進む。
+本番運用、scheduled job、retry、summary metric、failure taxonomy を固める段階では、配備済みの本番運用化手順や定期実行用の専門workflowへ進む。
 
 ## 手順
 
@@ -38,7 +38,7 @@ description: 外部API、外部provider、Web source、新しい provider adapte
 7. 次の一段だけ決める。
    - 実測した現実パターンだけを救済する。
    - 本番 job / webhook / CI へ載せる段階では、provider contract、失敗分類、summary metric を再点検する。
-   - 定期実行の外枠を固める段階では、`scheduled-batch-hardening` を使う。
+   - 定期実行の外枠を固める段階では、対象リポジトリに定期実行用の専門workflowが配備されているか確認する。
    - UI / report / DB viewer など人間向け readback surface が後からできた場合は、代表ケースが同じ値と理由で見えるか確認する。
 
 ## 原則
@@ -59,7 +59,7 @@ description: 外部API、外部provider、Web source、新しい provider adapte
 - partial result / stop reason / provider contract の未検証点
 - まだ補完していない欠損
 - 次に救済すべき現実パターン
-- 本番運用へ進める前に、配備済みの本番運用化手順や `scheduled-batch-hardening` で見るべき論点
+- 本番運用へ進める前に、配備済みの本番運用化手順や定期実行用の専門workflowで見るべき論点
 
 ## 参照
 

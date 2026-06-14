@@ -12,8 +12,8 @@ Android / mobile app で、健康データ、位置情報、センサー、個�
 - 既存リポジトリなら README、`AGENTS.md`、roadmap、privacy model、risk register、decision log、setup docs を先に見る。
 - 新規リポジトリなら `repo-bootstrap` と `project-preflight` で、MVP、やらないこと、privacy / secret 境界、risk register を先に置く。
 - toolchain で詰まったら `local-toolchain-diagnostics` を使う。
-- 外部APIやproviderの現実データを見る時は `provider-dry-run` を使い、本番運用へ載せる時は配備済みの本番運用化手順か `scheduled-batch-hardening` で再点検する。
-- 設定や保存値を育てる時は `persisted-settings-change`、CI/CDや署名、deployを触る時は `ci-infra-safety-review` を使う。
+- 外部APIやproviderの現実データを見る時は、外部連携用の専門workflowが配備されているか確認し、なければこの skill 内で最小観測、raw data、正規化、未検証点だけを分ける。
+- 設定や保存値、CI/CD、署名、deployを触る時は、該当profileの専門workflowが配備されているか確認し、なければこの skill では境界と未解決事項だけを残す。
 
 ## 手順
 

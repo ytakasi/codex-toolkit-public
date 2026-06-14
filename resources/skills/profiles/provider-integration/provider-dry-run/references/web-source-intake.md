@@ -36,7 +36,7 @@ API docs や typed SDK がある provider では通常の `provider-dry-run` を
 - 検索URLで category、status、price range、sort、page / offset を絞れるか確認する。
 - 1 run で読む page / item の上限を決める。
 - 次ページリンクがDOMにあるか、URL template で展開できるか、infinite scroll かを分ける。
-- 重い経路になりそうなら、scheduled job へ載せる前に `scheduled-batch-hardening` でランタイム予算を見る。
+- 重い経路になりそうなら、scheduled job へ載せる前に定期実行用の専門workflowが配備されているか確認し、なければ page / item 上限、timeout、再実行性をこの観測結果に残す。
 
 ## Fixture と境界
 

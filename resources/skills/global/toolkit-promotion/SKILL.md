@@ -84,7 +84,7 @@ description: 個別リポジトリの作業中に複数リポジトリで再利�
 
 - 境界判断に迷う時は `references/promotion-guide.md` を読む。
 - global / profile / リポジトリ固有 の配布判断に迷う時は `docs/TOOLKIT_DISTRIBUTION.md` を読む。
-- `codex-toolkit` 変更後の軽い整合性確認には `toolkit-integrity-audit` skill を使う。
+- `codex-toolkit` 正本リポジトリで実際に変更する場合だけ、保守用profileや同リポジトリ内の検証スクリプトで整合性を確認する。配備先リポジトリでは、この skill は昇格可否と置き場所の判断までに留める。
 - 既存 session の振り返りを始める時は `assets/session-retrospective-prompt.md` を使う。
 - 昇格しなかったが忘れたくない候補は `references/revisit-candidates.md` を見る。
 - agent / prompt / template / metadata の置き場所を迷う時は `references/agent-asset-boundaries.md` を見る。

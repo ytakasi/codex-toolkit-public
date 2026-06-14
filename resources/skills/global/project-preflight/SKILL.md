@@ -42,7 +42,7 @@ description: 新しいリポジトリ、新機能、外部provider接続、初�
    - PATHにあるかだけでなく、実際に `--version` / `--help` / dry-run が通るか見る。
    - mobile、cloud、DB、LLM、provider APIなど、実装前に詰まると大きいものを最小dry-runで見る。
    - 失敗は local toolchain、sandbox、network、provider、product bug に分ける。
-   - 外部providerのreal-data観測が必要なら `provider-dry-run` を使う。
+   - 外部providerのreal-data観測が必要なら、該当profileの専門workflowが配備されているか確認し、なければこの preflight 内で最小dry-run条件と観測結果だけを記録する。
    - toolchain問題なら `local-toolchain-diagnostics` を使う。
 
 6. 依存と生成物の置き場所を決める。

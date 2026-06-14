@@ -117,6 +117,27 @@ function Get-SkillDirectoryByName {
     return $matches[0]
 }
 
+function Get-SkillRootForPath {
+    param([string]$Path)
+
+    $item = Get-Item -LiteralPath $Path
+    $directory = if ($item.PSIsContainer) { $item } else { $item.Directory }
+    while ($null -ne $directory) {
+        if (Test-Path -LiteralPath (Join-Path $directory.FullName 'SKILL.md')) {
+            return $directory
+        }
+
+        $parent = $directory.Parent
+        if ($null -eq $parent -or $parent.FullName -eq $directory.FullName) {
+            break
+        }
+
+        $directory = $parent
+    }
+
+    return $null
+}
+
 function Test-SkillMetadata {
     $skillsRoot = Join-Path (Get-ResourcesRoot) 'skills'
     if (-not (Test-Path -LiteralPath $skillsRoot)) {
@@ -176,6 +197,64 @@ function Test-SkillMetadata {
         if (-not $yaml.Contains($skillToken)) {
             Add-ValidationError "default_prompt does not mention ${skillToken}: $($skillDir.Name)"
         }
+    }
+}
+
+function Test-SkillLocalReferences {
+    # Skill 本文から `references/...` / `assets/...` と案内するなら、同じ skill 配下で実体へ辿れることを要求する。
+    # profile を選んで同期した先でも迷子にならないよう、skill 内の相対参照だけをここで検証する。
+    $skillsRoot = Join-Path (Get-ResourcesRoot) 'skills'
+    if (-not (Test-Path -LiteralPath $skillsRoot)) {
+        return
+    }
+
+    $files = Get-ChildItem -LiteralPath $skillsRoot -Recurse -File -Include *.md
+    foreach ($file in $files) {
+        $skillRoot = Get-SkillRootForPath -Path $file.FullName
+        if ($null -eq $skillRoot) {
+            continue
+        }
+
+        $text = Get-TextFileContent -Path $file.FullName
+        $matches = [regex]::Matches($text, '`(?<path>(?:\.\./)?(?:references|assets)/[^`]+)`')
+        foreach ($match in $matches) {
+            $rawPath = $match.Groups['path'].Value.Trim()
+            $referencePath = $rawPath.TrimEnd('.', ',', '、', '。', ':', ';')
+            $target = if ($referencePath.StartsWith('../')) {
+                Join-Path $file.Directory.FullName $referencePath
+            } else {
+                Join-Path $skillRoot.FullName $referencePath
+            }
+
+            if (-not (Test-Path -LiteralPath $target)) {
+                Add-ValidationError "missing skill-local reference: $($file.FullName): $rawPath"
+            }
+        }
+    }
+}
+
+function Test-GlobalSkillProfileIndependence {
+    # global skill は常に同期されるため、選択制の profile skill 名へ直接依存させない。
+    # profile 側へ進む必要がある時は「該当profileが配備されているか確認する」と書く。
+    $globalRoot = Join-Path (Get-ResourcesRoot) 'skills\global'
+    $profilesRoot = Join-Path (Get-ResourcesRoot) 'skills\profiles'
+    if (-not (Test-Path -LiteralPath $globalRoot) -or -not (Test-Path -LiteralPath $profilesRoot)) {
+        return
+    }
+
+    $profileSkillNames = @(
+        Get-ChildItem -LiteralPath $profilesRoot -Recurse -File -Filter 'SKILL.md' |
+            ForEach-Object { $_.Directory.Name } |
+            Sort-Object -Unique
+    )
+
+    if ($profileSkillNames.Count -eq 0) {
+        return
+    }
+
+    $globalFiles = Get-ChildItem -LiteralPath $globalRoot -Recurse -File -Include *.md,*.yaml,*.yml
+    foreach ($match in ($globalFiles | Select-String -SimpleMatch -Pattern $profileSkillNames)) {
+        Add-ValidationError "global skill must not directly reference profile skill '$($match.Pattern)': $($match.Path):$($match.LineNumber): $($match.Line.Trim())"
     }
 }
 
@@ -305,6 +384,8 @@ function Test-GitDiffCheck {
 
 Test-ResourceRootLayout
 Test-SkillMetadata
+Test-SkillLocalReferences
+Test-GlobalSkillProfileIndependence
 Test-StaleReferences
 Test-ProviderReferenceMove
 Test-NotificationTemplateDeduplication

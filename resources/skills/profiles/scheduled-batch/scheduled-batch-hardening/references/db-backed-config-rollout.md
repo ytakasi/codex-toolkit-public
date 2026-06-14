@@ -70,8 +70,8 @@ DBを設定の正本にした後、管理画面やローカル編集UIを足す�
 
 ## 設定surface audit
 
-設定項目を足す、移す、消す時は `persisted-settings-change` の `references/config-surface-audit.md` を読む。
-DB-backed config だけでなく、CLI、admin UI、seed、docs、tests まで追随するかをそこで確認する。
+設定項目を足す、移す、消す時は、設定管理用profileが配備されているか確認する。
+配備されていなければ、DB-backed config だけでなく、CLI、admin UI、seed、docs、tests まで追随するかをこの reference の観点で確認する。
 
 ## まだtemplate化しない理由
 

@@ -41,7 +41,7 @@ description: 物語、分岐、状態管理、意思決定フロー、ゲーム�
    - 詳細チェックは `references/spec-readiness-checklist.md` を必要箇所だけ参照する。
    - 条件 schema の開始形が必要なら `assets/branching-schema-starter.yaml` を使う。
    - 監査結果を実装 slice へ渡す時は `references/implementation-bridge.md` を読む。
-   - ユーザーが明示的に並列 review を求めた時だけ、`references/optional-サブエージェント-lanes.md` を使う。
+   - ユーザーが明示的に並列 review を求めた時だけ、`references/optional-subagent-lanes.md` を使う。
 
 ## 出力
 

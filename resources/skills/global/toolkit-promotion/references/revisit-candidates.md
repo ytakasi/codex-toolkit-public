@@ -16,12 +16,12 @@ CLI / batch の管理ツールを WPF で作る時の初期形候補。
 
 - WPF限定でよいか、WinUI / Avalonia / Web admin に広げるべきか。
 - Core model 共有、secret masking、既存DB行ID維持保存、保存中ローディングが別リポジトリでも再発するか。
-- `persisted-settings-change` skill と `db-backed-config-rollout.md` で足りるか。
+- 設定管理用の既存workflowと DB-backed config の reference で足りるか。
 
 ### decision-flow branching schema template
 
 分岐型アプリやゲームで使う schema template 候補。
-現時点では `narrative-spec-readiness-audit/assets/branching-schema-starter.yaml` を skill asset として使う。
+現時点では分岐仕様監査用profileの asset として置き、top-level template には出していない。
 
 再判定の焦点:
 
@@ -34,14 +34,14 @@ CLI / batch の管理ツールを WPF で作る時の初期形候補。
 AI連携、mobile app、health/location/personal activity data、external API proxy を含むリポジトリを立ち上げる時に、実装前へ置く初期docsセット候補。
 
 発生元では、READMEを入口にし、project brief、roadmap、MVP scope、privacy model、decision log、risk register、technical feasibility、references、development story を初期commit前に整えた。
-Android / mobile の実装前 risk burn-down は `android-mobile-risk-burndown` として扱うため、この候補では初期docsセットと privacy-first bootstrap の器だけを再判定する。
+Android / mobile の実装前 risk burn-down は専用profileの範囲として扱うため、この候補では初期docsセットと privacy-first bootstrap の器だけを再判定する。
 
 再判定の焦点:
 
 - `repo-bootstrap` に reference/template として吸収するだけで足りるか、新skillが必要か。
 - `PRIVACY_MODEL.md` / `DECISIONS.md` / `RISK_REGISTER.md` の初期雛形を、複数リポジトリでそのまま使うか。
 - AI + personal data + external provider の組み合わせで、リポジトリ開始時に privacy/data boundary docs を先に固定する流れが再発するか。
-- 実装後の ops 点検や `provider-dry-run` では遅すぎる、リポジトリ立ち上げ時専用の判断があるか。
+- 実装後の ops 点検や外部providerの初回観測では遅すぎる、リポジトリ立ち上げ時専用の判断があるか。
 
 ## workflow / サブエージェント 再判定候補
 
@@ -52,10 +52,10 @@ Android / mobile の実装前 risk burn-down は `android-mobile-risk-burndown` 
 
 現在は次の reference に optional lane と成果物形式がある。
 
-- `provider-dry-run/references/optional-source-scout.md`
-- ops 点検用の optional scout contract
-- `persisted-settings-change/references/optional-config-boundary-reviewer.md`
-- runtime state path audit
+- 外部source探索用の optional scout contract
+- 運用差分確認用の optional scout contract
+- 設定境界レビュー用の optional reviewer contract
+- runtime state path 監査 contract
 
 `source-scout` と `runtime-state-auditor` は reference 内に lane contract を持つ。まだ standalone skill / agent にはせず、ここには独立 サブエージェント 化を再判定する条件だけ残す。
 
@@ -67,7 +67,7 @@ Android / mobile の実装前 risk burn-down は `android-mobile-risk-burndown` 
 
 ### content-review-lane
 
-現在は `CONTENT_REVISION_INTAKE.md`、`GATE_REVIEW.md`、`QA_REPORT.md` を組み合わせる。
+現在は文章修正 intake、gate review、QA report のテンプレートを組み合わせる。
 ここには、domain 固有 editor / reviewer lane として切り出す条件だけ残す。
 
 再判定の焦点:

@@ -114,6 +114,5 @@ resources/
 | `resources/templates/codex-requirements` | Codex の管理側強制設定用の雛形。 |
 | `resources/skills/global/repo-bootstrap/assets` | 新規リポジトリの `AGENTS.md`、開発記録、setup docs、Node setup helper の叩き台。 |
 | `resources/skills/global/work-mode-triage/assets` | issue body と作業モード切り替え checklist の初期形。 |
-| `resources/skills/global/report-artifact-writing/assets` | PR、QA、review、handoff、content revision、gate review の成果物テンプレート。 |
 | `resources/skills/profiles/scheduled-batch/scheduled-batch-hardening/assets` | 定期ジョブ用 GitHub Actions workflow と .NET one-shot worker の初期形。 |
 | `resources/skills/profiles/deploy-infra/ci-infra-safety-review/assets` | CI/CD から deploy する workflow の初期形。 |

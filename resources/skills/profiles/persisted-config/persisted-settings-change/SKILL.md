@@ -51,7 +51,7 @@ scheduled batch だけに限らず、通知先、監視条件、連携先、feat
 ## 参照
 
 - 設定追加・移動・削除で追随surfaceを棚卸しする時は `references/config-surface-audit.md` を読む。
-- scheduled batch / watcher の DB-backed config 移行や設定編集UIは `scheduled-batch-hardening` の `references/db-backed-config-rollout.md` を読む。
+- scheduled batch / watcher の DB-backed config 移行や設定編集UIは、定期実行用profileが配備されているか確認し、なければこの skill 内で設定分類、保存経路、seed、既存ID維持だけを点検する。
 - 大量設定や secret 境界だけを親エージェントの本流作業と並列レビューしたい時は `references/optional-config-boundary-reviewer.md` を読む。
 - 実装後は env、DB、docs drift、manual step が残っていないか確認する。
 - ユーザー向け表示文言と機械可読な識別子を分け、保存値や外部契約を表示ラベルの変更に巻き込まない。
